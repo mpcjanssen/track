@@ -1,3 +1,5 @@
+# Tcl on Track
+
 A work in progress library for making a small web framework. Heavily inspired by the Elixir Phoenix framework request pipelining and routing
 
 The name is a pun on Rails and starts with a T so we have Tcl on Track.
@@ -9,7 +11,7 @@ The name is a pun on Rails and starts with a T so we have Tcl on Track.
    * Prefix based: All defined callbacks are treated as prefixes.
    * Re-usable: The transformers should be usable with any dict of the right structure. For example, the router could be useful in other contexts than web servers and should be usable in that way.
    * Explicit: there should be no magic. The flow of application should be easy to follow. An example is the routing table specifying the exact proc that is called. And handlers needing to extract the request params instead of upvar or similar gymnastics.
-    * Standard: basic Tcl structures and idioms should be used as much as possible. So for example the routes definition is a simple Tcl list which can be dynamically built and modified using standard Tcl.
+   * Standard: basic Tcl structures and idioms should be used as much as possible. So for example the routes definition is a simple Tcl list which can be dynamically built and modified using standard Tcl.
 
 
 # Components
