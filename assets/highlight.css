@@ -1,71 +1,108 @@
 /*
-Monokai style - ported by Luigi Maselli - http://grigio.org
+
+Gruvbox style (light) (c) Pavel Pertsev (original style at https://github.com/morhetz/gruvbox)
+
 */
 
 .hljs {
   display: block;
   overflow-x: auto;
   padding: 0.5em;
-  background: #272822;
-  color: #ddd;
+  background: #fbf1c7;
 }
 
-.hljs-tag,
+.hljs,
+.hljs-subst {
+  color: #3c3836;
+}
+
+/* Gruvbox Red */
+.hljs-deletion,
+.hljs-formula,
 .hljs-keyword,
-.hljs-selector-tag,
-.hljs-literal,
-.hljs-strong,
-.hljs-name {
-  color: #f92672;
+.hljs-link,
+.hljs-selector-tag {
+  color: #9d0006;
 }
 
-.hljs-code {
-  color: #66d9ef;
-}
-
-.hljs-class .hljs-title {
-  color: white;
-}
-
-.hljs-attribute,
-.hljs-symbol,
-.hljs-regexp,
-.hljs-link {
-  color: #bf79db;
-}
-
-.hljs-string,
-.hljs-bullet,
-.hljs-subst,
-.hljs-title,
-.hljs-section,
-.hljs-emphasis,
-.hljs-type,
+/* Gruvbox Blue */
 .hljs-built_in,
-.hljs-builtin-name,
-.hljs-selector-attr,
-.hljs-selector-pseudo,
-.hljs-addition,
-.hljs-variable,
+.hljs-emphasis,
+.hljs-name,
+.hljs-quote,
+.hljs-strong,
+.hljs-title,
+.hljs-variable {
+  color: #076678;
+}
+
+/* Gruvbox Yellow */
+.hljs-attr,
+.hljs-params,
 .hljs-template-tag,
+.hljs-type {
+  color: #b57614;
+}
+
+/* Gruvbox Purple */
+.hljs-builtin-name,
+.hljs-doctag,
+.hljs-literal,
+.hljs-number {
+  color: #8f3f71;
+}
+
+/* Gruvbox Orange */
+.hljs-code,
+.hljs-meta,
+.hljs-regexp,
+.hljs-selector-id,
 .hljs-template-variable {
-  color: #a6e22e;
+  color: #af3a03;
+}
+
+/* Gruvbox Green */
+.hljs-addition,
+.hljs-meta-string,
+.hljs-section,
+.hljs-selector-attr,
+.hljs-selector-class,
+.hljs-string,
+.hljs-symbol {
+  color: #79740e;
+}
+
+/* Gruvbox Aqua */
+.hljs-attribute,
+.hljs-bullet,
+.hljs-class,
+.hljs-function,
+.hljs-function .hljs-keyword,
+.hljs-meta-keyword,
+.hljs-selector-pseudo,
+.hljs-tag {
+  color: #427b58;
+}
+
+/* Gruvbox Gray */
+.hljs-comment {
+  color: #928374;
+}
+
+/* Gruvbox Purple */
+.hljs-link_label,
+.hljs-literal,
+.hljs-number {
+  color: #8f3f71;
 }
 
 .hljs-comment,
-.hljs-quote,
-.hljs-deletion,
-.hljs-meta {
-  color: #75715e;
+.hljs-emphasis {
+  font-style: italic;
 }
 
-.hljs-keyword,
-.hljs-selector-tag,
-.hljs-literal,
-.hljs-doctag,
-.hljs-title,
 .hljs-section,
-.hljs-type,
-.hljs-selector-id {
+.hljs-strong,
+.hljs-tag {
   font-weight: bold;
 }
