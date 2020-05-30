@@ -1,10 +1,10 @@
 namespace eval track {
   variable debug false
   variable assets .
-  namespace export @p @s
+  namespace export @p @c
 
   proc http_headers {req status headers} {
-    set socket [dict get $req socket]
+    set socket [@c $req]
     fconfigure $socket -translation crlf
     puts $socket "Status: $status OK"
     foreach {head val} $headers {
@@ -28,15 +28,15 @@ namespace eval track {
     return [dict get $req params $name] 
   }
 
-  proc @s {req} {
-    return [dict get $req socket] 
+  proc @c {req} {
+    return [dict get $req channel] 
   }
 
   proc debug_req {req} {
     package require html
     array set Headers [dict get $req headers]
     set body [dict get $req body]
-    set sock [dict get $req socket]
+    set sock [@c $req]
 
     puts $sock "Status: 200 OK"
     puts $sock "Content-Type: text/html"
@@ -88,7 +88,7 @@ namespace eval track {
   proc asset {file type req} {
     variable assets
     track::http_headers $req 200 [list Content-Type $type]
-    set s [@s $req]
+    set s [@c $req]
     set f [open [file join $assets $file] rb]
     fconfigure $s -translation binary
     fcopy $f $s
@@ -123,7 +123,7 @@ namespace eval track {
     variable header
     variable footer
     track::http_headers $req 200 [list Content-Type text/html]
-    set s [@s $req]
+    set s [@c $req]
     set f [open [file join $assets $file] rb]
     puts $s $header[cmark::render [read $f] ]$footer
     close $f

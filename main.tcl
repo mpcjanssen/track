@@ -28,5 +28,5 @@ catch {
 }
 
 scgi::start 9999 [list router::route $routes] 
-# scgi::start 9999 scgi::debug_router
+# wapp4track::start 12345 track::debug_req
 vwait forever

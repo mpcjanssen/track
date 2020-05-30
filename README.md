@@ -26,8 +26,22 @@ Available:
    * SCGI
 
 
+### Contract
 
-## router
+A server handles an incoming server connection and for every connection calls the handler prefix with request dict appended.
+
+The request dict has at least the following elements:
+
+- channel: the client connection
+- headers: the headers (if any) of the request
+- path: the path of the request used by routers
+- body: the body of the request
+
+
+
+
+
+## Router
 
 The router library takes a request dict and takes the path element an a routes list. It will then determine which route matches and call the associated prefix command with the request dict as last parameter (or without if the prefix start with !)
 

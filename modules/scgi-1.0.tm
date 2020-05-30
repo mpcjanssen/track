@@ -54,7 +54,7 @@ namespace eval scgi {
       fileevent $sock readable [namespace code [list read_body $sock $headers $content_length $body]]
       return
     } else {
-      namespace inscope :: [list {*}$_router [list socket $sock headers $headers body $body path [dict get $headers SCRIPT_NAME]]]
+      namespace inscope :: [list {*}$_router [list channel $sock headers $headers body $body path [dict get $headers SCRIPT_NAME]]]
     }
   }
 
