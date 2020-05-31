@@ -19,7 +19,7 @@ The name is a pun on Rails and starts with a T so we have Tcl on Track.
 
 ## Server
 
-Libraries of server connectors to convert the incoming request to a dict with the required parts correctly filled. For example socket should contain the client socket and path the query path.
+Libraries of server connectors to convert the incoming request to a dict with the required parts correctly filled. For example socket should contain the client socket and path the query path. Once the request is handled. The server provides a response command which will send the response back to the server.
 
 Available:
 
@@ -37,6 +37,12 @@ The request dict has at least the following elements:
 - path: the path of the request used by routers
 - body: the body of the request
 
+
+After handling the request dict contains a response element with the following child elements:
+
+- status: The status code to send to the client
+- mode: either `text`, `list` or `channel`.
+- content: The body to send to the client if mode = `text` or `list`. In case of list the body is iterated in a foreach. This allows creating responses step by step without having to concatenate it into a big string. The channel to fcopy if mode is `channel`.
 
 
 
