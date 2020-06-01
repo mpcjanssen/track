@@ -65,13 +65,12 @@ namespace eval scgi {
 
     proc response {sock start res} {
 	set ret {}
-	if {$res eq {}} {
-	    # async handling
-	    # result is handled by callback
-	    return
-	}
 	# if {[llength $res] %2 != 0} {puts $res ; error oops}
 	dict with res {
+	    if {$mode eq "cb"} {
+		# result will come later with a call back
+		return
+	    }
 	    fconfigure $sock -translation crlf
 	    puts $sock "Status: $status OK"
 	    foreach {head val} $headers {

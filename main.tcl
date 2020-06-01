@@ -16,6 +16,7 @@ set routes {
   /css/default.css            {track::asset default.css text/css}
   /css/highlight.css            {track::asset highlight.css text/css}
   /js/highlight.js            {track::asset highlight.js  text/javascript}
+  /favicon.ico            {410}
   /doc                        {track::md ../README.md}
   /                           {track::md index.md}
   /console			              {!console show}
@@ -27,6 +28,9 @@ catch {
   wm withdraw .
 }
 
+proc 410 {args} {
+	return {status 410 body {} mode text headers {}}
+}
 scgi::start 9999 [list router::route $routes] 
 # wapp4track::start 12345 track::debug_req
 vwait forever

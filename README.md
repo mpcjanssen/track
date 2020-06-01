@@ -1,12 +1,12 @@
 # Tcl on Track
 
-A work in progress library for making a small web framework. Heavily inspired by the Elixir Phoenix framework request pipelining and routing
+A work in progress library for making a small web framework. Heavily inspired by the Elixir Phoenix framework request pipelining and routing and Clojure Rack data structures.
 
 The name is a pun on Rails and starts with a T so we have Tcl on Track.
 
 # Design
 
-   * Functional: most functions will transform a dict containing the information about the request and response.
+   * Functional: most functions will transform a dicts containing the information about the request or produce a response.
    * Composable: it should be possible to combine request dict transformers in arbitrary order. This makes it possible to pick and choose parts of the "framework" and make it easy to extend. 
    * Prefix based: All defined callbacks are treated as prefixes.
    * Re-usable: The transformers should be usable with any dict of the right structure. For example, the router could be useful in other contexts than web servers and should be usable in that way.
