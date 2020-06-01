@@ -1,13 +1,19 @@
 namespace eval track {
   variable debug false
   variable assets .
-  namespace export @p @cb
+  namespace export @p @cb @ms
   
 
 
   proc @p {req name} {
     return [dict get $req params $name] 
   }
+
+  proc @ms {req} {
+    return [dict get $req ms] 
+  }
+
+
 
   proc @cb {req} {
     return [dict get $req cb] 
@@ -52,9 +58,10 @@ namespace eval track {
 
   proc async_response {req res} {
     set cb [@cb $req]
+    set start [@ms $req]
     puts "Handling with cb $cb"
     set cb_cmd [lindex $cb end]
-    lappend cb_cmd $res
+    lappend cb_cmd $start $res
     lset cb end $cb_cmd 
     return [{*}$cb]
   }

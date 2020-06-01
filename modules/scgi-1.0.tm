@@ -57,11 +57,13 @@ namespace eval scgi {
       fileevent $sock readable [namespace code [list read_body $sock $headers $content_length $body]]
       return
     } else {
-	response $sock [namespace inscope :: [list {*}$_router [list headers $headers body $body path [dict get $headers SCRIPT_NAME] cb [namespace code [list response $sock]]]]]
+        set req [list headers $headers body $body path [dict get $headers SCRIPT_NAME] cb [namespace code [list response $sock]]]
+	dict set req ms [clock milliseconds]
+	response $sock [clock milliseconds] [namespace inscope :: [list {*}$_router $req]]
     }
   }
 
-    proc response {sock res} {
+    proc response {sock start res} {
 	set ret {}
 	if {$res eq {}} {
 	    # async handling
@@ -93,7 +95,8 @@ namespace eval scgi {
 	}
 	
 	close $sock
-        puts [chan names]
+	puts "Handled in [expr {[clock milliseconds] - $start}] ms"
+        # puts [chan names]
 	return $ret
     }
 

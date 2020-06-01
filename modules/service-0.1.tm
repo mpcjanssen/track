@@ -17,7 +17,9 @@ namespace eval service {
     catch {
         set subresource [@p $req subresource ]
     }
+	puts $req
 	set url https://www.google.com/search?[http::formatQuery q $id]
 	http::geturl $url -handler [list track::httpmirror $req]
+        return
     }
 }
