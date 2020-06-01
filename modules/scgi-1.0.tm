@@ -58,8 +58,14 @@ namespace eval scgi {
 	    return
 	} else {
 	    set req [list headers $headers body $body path [dict get $headers SCRIPT_NAME] cb [namespace code [list response $sock]]]
-	    dict set req ms [clock milliseconds]
-	    response $sock [clock milliseconds] [namespace inscope :: [list {*}$_router $req]]
+	    set start [clock milliseconds]
+	    dict set req ms $start
+	    if {[catch {
+	    	response $sock $start [namespace inscope :: [list {*}$_router $req]]
+	    } result]} {
+		puts "ERROR: $::errorInfo"
+		response $sock $start [list mode text status 500 body $::errorInfo headers {Content-Type text/plain}]	 
+            }
 	}
     }
 

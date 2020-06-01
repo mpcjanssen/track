@@ -17,6 +17,7 @@ set routes {
   /css/highlight.css            {track::asset highlight.css text/css}
   /js/highlight.js            {track::asset highlight.js  text/javascript}
   /favicon.ico            {410}
+  /error		      {!error oops}
   /doc                        {track::md ../README.md}
   /                           {track::md index.md}
   /console			              {!console show}
