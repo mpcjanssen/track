@@ -41,8 +41,8 @@ The request dict has at least the following elements:
 After handling the request dict contains a response element with the following child elements:
 
 - status: The status code to send to the client
-- mode: either `text`, `list` or `channel`.
-- content: The body to send to the client if mode = `text` or `list`. In case of list the body is iterated in a foreach. This allows creating responses step by step without having to concatenate it into a big string. The channel to fcopy if mode is `channel`.
+- mode: either `text`, `list` or `chan`.
+- body: The body to send to the client if mode = `text` or `list`. In case of list the body is iterated in a foreach. This allows creating responses step by step without having to concatenate it into a big string. The channel to fcopy if mode is `chan`.
 
 
 

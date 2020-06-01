@@ -1,102 +1,81 @@
 namespace eval track {
   variable debug false
   variable assets .
-  namespace export @p @c
+  namespace export @p @cb
+  
 
-  proc http_headers {req status headers} {
-    set socket [@c $req]
-    fconfigure $socket -translation crlf
-    puts $socket "Status: $status OK"
-    foreach {head val} $headers {
-      puts $socket "$head: $val"
-    }
-    puts $socket ""
-  }
-  proc http_ok {req} {
-    set socket [dict get $req socket]
-    fconfigure $socket -translation crlf
-    puts $socket "Status: 200 OK"
-  }
-
-  proc http_startbody {req} {
-    set socket [dict get $req socket]
-    fconfigure $socket -translation crlf
-    puts $socket ""
-  }
 
   proc @p {req name} {
     return [dict get $req params $name] 
   }
 
-  proc @c {req} {
-    return [dict get $req channel] 
+  proc @cb {req} {
+    return [dict get $req cb] 
   }
+
 
   proc debug_req {req} {
     package require html
     array set Headers [dict get $req headers]
     set body [dict get $req body]
-    set sock [@c $req]
+    set result ""
 
-    puts $sock "Status: 200 OK"
-    puts $sock "Content-Type: text/html"
-    puts $sock ""
-    puts $sock "<HTML>"
-    puts $sock "<BODY>"
-    puts $sock [::html::tableFromArray Headers]
-    puts $sock "</BODY>"
-    puts $sock "<H3>Body</H3>"
-    puts $sock "<PRE>$body</PRE>"
-    puts $sock "<H3>Req</H3>"
-    puts $sock "<PRE>$req</PRE>"
+    lappend result "<HTML>"
+    lappend result "<BODY>"
+    lappend result [::html::tableFromArray Headers]
+    lappend result "</BODY>"
+    lappend result "<H3>Body</H3>"
+    lappend result "<PRE>$body</PRE>"
+    lappend result "<H3>Req</H3>"
+    lappend result "<PRE>$req</PRE>"
     if {$Headers(REQUEST_METHOD) eq "GET"} {
-      puts $sock {<FORM METHOD="post" ACTION="/scgi">}
+      lappend result {<FORM METHOD="post" ACTION="/scgi">}
       foreach pair [split $Headers(QUERY_STRING) &] {
         lassign [split $pair =] key val
-        puts $sock "$key: [::html::textInput $key $val]<BR>"
+        lappend result "$key: [::html::textInput $key $val]<BR>"
       }
-      puts $sock "<BR>"
-      puts $sock {<INPUT TYPE="submit" VALUE="Try POST">}
+      lappend result "<BR>"
+      lappend result {<INPUT TYPE="submit" VALUE="Try POST">}
     } else {
-      puts $sock {<FORM METHOD="get" ACTION="/scgi">}
+      lappend result {<FORM METHOD="get" ACTION="/scgi">}
       foreach pair [split $body &] {
         lassign [split $pair =] key val
-        puts $sock "$key: [::html::textInput $key $val]<BR>"
+        lappend result "$key: [::html::textInput $key $val]<BR>"
       }
-      puts $sock "<BR>"
-      puts $sock {<INPUT TYPE="submit" VALUE="Try GET">}
+      lappend result "<BR>"
+      lappend result {<INPUT TYPE="submit" VALUE="Try GET">}
     }
-    puts $sock "</FORM>"
-    puts $sock "</HTML>"
-    close $sock
+    lappend result "</FORM>"
+    lappend result "</HTML>"
+    return [list status 200 headers {Content-Type text/html} mode list body $result]
   }
 
-  proc httpmirror {req_socket socket token} {
+  proc async_response {req res} {
+    set cb [@cb $req]
+    puts "Handling with cb $cb"
+    set cb_cmd [lindex $cb end]
+    lappend cb_cmd $res
+    lset cb end $cb_cmd 
+    return [{*}$cb]
+  }
+  
+  proc httpmirror {req socket token} {
     upvar 1 $token tok
     fileevent $socket readable {}
-    fconfigure $req_socket -translation crlf
-    puts $req_socket "Status: 200 OK"
-    foreach {head val} $tok(meta) {
-      puts $req_socket "$head: $val"
-    }
-    puts $req_socket ""
-    fconfigure $req_socket -translation binary
-
-    return [fcopy $socket $req_socket]
-
+    return [async_response $req [list status 200 mode chan body $socket headers $tok(meta)]]
+    
   }
+  
   proc asset {file type req} {
     variable assets
-    track::http_headers $req 200 [list Content-Type $type]
-    set s [@c $req]
+    set headers [list Content-Type $type]
+    set status 200
     set f [open [file join $assets $file] rb]
-    fconfigure $s -translation binary
-    fcopy $f $s
-    close $f
-    close $s
-
+    return [list status 200 headers $headers mode chan body $f] 
   }
-  set header {<!DOCTYPE html>
+  
+
+set header {<!DOCTYPE html>
               <html lang="en">
               <head>
               <meta charset="UTF-8">
@@ -117,17 +96,20 @@ namespace eval track {
               </body>
               </html>}
 
-  proc md {file req} {
+
+proc md {file req} {
     package require cmark
     variable assets
     variable header
     variable footer
-    track::http_headers $req 200 [list Content-Type text/html]
-    set s [@c $req]
+    set result [list status 200 headers {Content-Type text/html}]
     set f [open [file join $assets $file] rb]
-    puts $s $header[cmark::render [read $f] ]$footer
+    dict lappend result body $header
+    dict lappend result body [cmark::render [read $f] ]
+    dict lappend result body $footer
+    dict set result mode list
     close $f
-    close $s
+    return $result
 
   }
 

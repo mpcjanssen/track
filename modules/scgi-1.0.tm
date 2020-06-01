@@ -1,3 +1,6 @@
+package require track
+namespace import track::*
+
 namespace eval scgi {
   variable _router
   proc listen {host port router} {
@@ -54,10 +57,45 @@ namespace eval scgi {
       fileevent $sock readable [namespace code [list read_body $sock $headers $content_length $body]]
       return
     } else {
-      namespace inscope :: [list {*}$_router [list channel $sock headers $headers body $body path [dict get $headers SCRIPT_NAME]]]
+	response $sock [namespace inscope :: [list {*}$_router [list headers $headers body $body path [dict get $headers SCRIPT_NAME] cb [namespace code [list response $sock]]]]]
     }
   }
 
+    proc response {sock res} {
+	set ret {}
+	if {$res eq {}} {
+	    # async handling
+	    # result is handled by callback
+	    return
+	}
+	# if {[llength $res] %2 != 0} {puts $res ; error oops}
+	dict with res {
+	    fconfigure $sock -translation crlf
+	    puts $sock "Status: $status OK"
+	    foreach {head val} $headers {
+		puts $sock "$head: $val"
+	    }
+	    puts $sock ""
+	    switch -exact $mode {
+		list {
+		    foreach l $body {
+			puts -nonewline $sock $l
+		    }
+		}
+		chan {
+		    fconfigure $sock -translation binary
+		    fileevent $body readable {}
+		    set ret [fcopy $body $sock]
+		    close $body
+		}
+		
+	    }
+	}
+	
+	close $sock
+        puts [chan names]
+	return $ret
+    }
 
   proc start {port handlerprefix} {
     puts "Listening on port $port"

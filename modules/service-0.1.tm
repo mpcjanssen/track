@@ -11,16 +11,13 @@ namespace eval service {
 
     proc handler {req} {
 	
-
 	set id [@p $req id]
 	puts $id
     set subresource {}
     catch {
         set subresource [@p $req subresource ]
     }
-	set req_socket [@c $req]
 	set url https://www.google.com/search?[http::formatQuery q $id]
-	http::geturl $url -handler [list track::httpmirror $req_socket]
-	close $req_socket
+	http::geturl $url -handler [list track::httpmirror $req]
     }
 }
