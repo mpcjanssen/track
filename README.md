@@ -19,7 +19,8 @@ The name is a pun on Rails and starts with a T so we have Tcl on Track.
 
 ## Server
 
-Libraries of server connectors to convert the incoming request to a dict with the required parts correctly filled. For example socket should contain the client socket and path the query path. Once the request is handled. The server provides a response command which will send the response back to the server.
+Libraries of server connectors to convert the incoming request to a dict with the required parts correctly filled. For example socket should contain the client socket and path the query path. Once the request is handled. The server send the response back to the client.
+A server can provide a cb element in the request dict which can be used to asynchronously handle the request. It's usally easiest to call the callback indirectly using `track::async_response $req $res`.
 
 Available:
 
@@ -32,10 +33,11 @@ A server handles an incoming server connection and for every connection calls th
 
 The request dict has at least the following elements:
 
-- channel: the client connection
 - headers: the headers (if any) of the request
 - path: the path of the request used by routers
 - body: the body of the request
+- cb: (optional) callback for asynchrounous handling
+- ms: `[clock milliseconds]` at start of the request
 
 
 After handling the request dict contains a response element with the following child elements:
