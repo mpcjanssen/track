@@ -69,14 +69,15 @@ namespace eval track {
   proc httpmirror {req socket token} {
     upvar 1 $token tok
     fileevent $socket readable {}
-    return [async_response $req [list status 200 mode chan body $socket headers $tok(meta)]]
+    set status [http::code $token]
+    lassign [split $status] _ status
+    return [async_response $req [list status $status mode chan body $socket headers $tok(meta)]]
     
   }
   
   proc asset {file type req} {
     variable assets
     set headers [list Content-Type $type]
-    set status 200
     set f [open [file join $assets $file] rb]
     return [list status 200 headers $headers mode chan body $f] 
   }
