@@ -34,7 +34,7 @@ namespace eval scgi {
 
     proc read_headers {sock length data} {
 	append data [read $sock]
-
+	puts $length
 	if {[string length $data] < $length+1} {
 	    # we don't have the complete headers yet, wait for more
 	    fileevent $sock readable [namespace code [list read_headers $sock $length $data]]
@@ -58,14 +58,8 @@ namespace eval scgi {
 	    return
 	} else {
 	    set req [list headers $headers body $body path [dict get $headers SCRIPT_NAME] cb [namespace code [list response $sock]]]
-	    set start [clock milliseconds]
-	    dict set req ms $start
-	    if {[catch {
-	    	response $sock $start [namespace inscope :: [list {*}$_router $req]]
-	    } result]} {
-		puts "ERROR: $::errorInfo"
-		response $sock $start [list mode text status 500 body $::errorInfo headers {Content-Type text/plain}]	 
-            }
+	    dict set req ms [clock milliseconds]
+	    response $sock [clock milliseconds] [namespace inscope :: [list {*}$_router $req]]
 	}
     }
 
@@ -110,7 +104,7 @@ namespace eval scgi {
 
     proc start {port handlerprefix} {
 	puts "Listening on port $port"
-	scgi::listen localhost 9999 $handlerprefix
+	scgi::listen localhost $port $handlerprefix
 
     }
 }

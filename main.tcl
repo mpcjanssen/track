@@ -1,7 +1,7 @@
 tcl::tm::path add [file join [file dirname [info script]] modules]
 
 
-package require scgi
+package require dustmote4track
 package require router
 package require track
 
@@ -32,6 +32,10 @@ catch {
 proc 410 {args} {
 	return {status 410 body {} mode text headers {}}
 }
-scgi::start 9999 [list router::route $routes] 
+
+
+# scgi::start 9999 [list router::route $routes] 
+dustmote4track::start 9999 [list router::route $routes] 
+
 # wapp4track::start 12345 track::debug_req
 vwait forever

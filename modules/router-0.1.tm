@@ -28,8 +28,7 @@ namespace eval router {
 		if {[string index $prefixcmd 0] ne "!"} {
 		    return [{*}$prefixcmd $req]
 		} else {
-		    set body [{*}[string range $prefixcmd 1 end]]
-		    return [list status 200 body $body mode text headers {}]
+		    return [{*}[string range $prefixcmd 1 end]]
 		} 
 
 	    }
